@@ -1,0 +1,123 @@
+/*
+Couleur de texte bleue : 36478f
+Couleur orange : eb7748
+Couleur fond beige : fff1e8
+*/
+
+@font-face {
+  font-family: Lilita One;
+  src: url(fonts/LilitaOne-Regular.ttf);
+}
+
+* {
+    -webkit-print-color-adjust: exact !important;   /* Chrome, Safari 6 – 15.3, Edge */
+    color-adjust: exact !important;                 /* Firefox 48 – 96 */
+    print-color-adjust: exact !important;           /* Firefox 97+, Safari 15.4+ */
+}
+
+/* weasyprint */
+@page {
+	size: A4;
+	margin: 0;
+}
+
+@media print {
+  body, page[size="A4"] {
+    margin: 0;
+    box-shadow: 0;
+  }
+}
+
+html, body, page {
+	/* Taille A4 */
+    width: 210mm;
+    height: 297mm;
+
+	margin: 0;
+}
+
+body {
+	color: #36478f;
+
+	font-size: 15pt;
+	font-family: Raleway;
+}
+
+page {
+	display: block;
+	
+	background-image: url("imgs/fond.png");
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+
+	page-break-after: always;
+}
+
+
+
+header {
+	display: block;
+	height: 40mm;
+	background-image: url("imgs/logo.png");
+	background-repeat: no-repeat;
+	background-position: 20mm 50%;
+	background-size: 50mm 25mm;
+
+	padding: 0mm 10mm 0mm;
+	text-align: right;
+}
+
+h1 {
+	margin: 0;
+	font-size: 22pt;
+}
+
+div {
+	margin: 0mm 0mm 3mm 22mm;
+	padding: 1mm 3mm 2mm;
+
+	width: 170mm;
+
+	border: 3px solid #36478f;
+	border-radius: 25px;
+	background-color: #fff1e8;
+}
+
+mois {
+	display: block;
+	margin-bottom: -2.5mm;
+
+	font-family: Lilita One;	
+	font-size: 65pt;
+}
+
+date {
+	margin: 2mm 2mm 3mm -20mm;
+	padding: 2mm 1mm 2mm;
+	height: 24mm;
+	width: 30mm;
+	display: block;
+
+	border: 3px solid #eb7748;
+	border-radius: 25px;
+	background-color: white;
+	color: #eb7748;
+	font-weight: bold;
+	text-transform: uppercase;
+	text-align: center;
+	float: left;
+}
+
+jour {
+	margin: -1mm -1mm -2mm;
+	display: block;
+	
+	font-family: Lilita One;
+	font-size: 50pt;
+	color: #36478f;
+}
+
+heure {
+	color: #eb7748;
+	font-weight: bold;
+}
