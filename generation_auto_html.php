@@ -75,11 +75,6 @@ $end_date->modify("+28 day");
 $events = get_events_in_period($start_date, $end_date);
 $events_per_week = group_events_per_day_per_week($events);
 
-
-// TODO
-$mois = "Mars";
-
-
 ?>
 
 <!DOCTYPE html>
@@ -107,6 +102,13 @@ $mois = "Mars";
 
 <?php
      foreach($events_per_week as $week_events) {
+         $date = new DateTime(current($week_events)[0]["start_date"]);
+         $fmt = datefmt_create(
+             "fr-FR",
+             pattern: "LLLL",
+         );
+         $mois = datefmt_format($fmt, $date);
+
          ?>
 
      <page>

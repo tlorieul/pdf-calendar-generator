@@ -90,6 +90,7 @@ mois {
 
 	font-family: Lilita One;	
 	font-size: 65pt;
+	text-transform: capitalize;
 }
 
 date {
