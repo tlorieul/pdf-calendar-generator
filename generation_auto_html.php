@@ -48,16 +48,21 @@ function get_events_in_period($start_date, $end_date) {
     return $data;
 }
 
-function group_events_per_week($events) {
+function group_events_per_day_per_week($events) {
     $i = 0;
     $events_per_week = [];
     foreach($events as $event) {
-        $week_number = (new DateTime($event["start_date"]))->format("W");
+        $start_date = new DateTime($event["start_date"]);
+        $week_number = $start_date->format("W");
+        $day_number = $start_date->format("d");
         
         if(!array_key_exists($week_number, $events_per_week))
             $events_per_week[$week_number] = [];
-
-        $events_per_week[$week_number][] = $event;
+        
+        if(!array_key_exists($day_number, $events_per_week[$week_number]))
+            $events_per_week[$week_number][$day_number] = [];
+        
+        $events_per_week[$week_number][$day_number][] = $event;
     }
 
     return $events_per_week;
@@ -68,7 +73,7 @@ $end_date = clone($start_date);
 $end_date->modify("+28 day");
 
 $events = get_events_in_period($start_date, $end_date);
-$events_per_week = group_events_per_week($events);
+$events_per_week = group_events_per_day_per_week($events);
 
 
 // TODO
@@ -101,7 +106,7 @@ $mois = "Mars";
   <body>
 
 <?php
-     foreach($events_per_week as $events) {
+     foreach($events_per_week as $week_events) {
          ?>
 
      <page>
@@ -119,32 +124,38 @@ $mois = "Mars";
 	  </header>
 
 <?php
-     foreach($events as $event) {
-         $start_date = new DateTimeImmutable($event["start_date"]);
-         $end_date = new DateTimeImmutable($event["end_date"]);
-         
-         $jour = $start_date->format("d");
-         $heure_debut = $start_date->format("H\hi");
-         
+     foreach($week_events as $jour => $day_events) {
+         $start_date = new DateTime($day_events[0]["start_date"]);
          $fmt = datefmt_create(
              "fr-FR",
              pattern: "EEEE",
          );
          $jour_semaine = datefmt_format($fmt, $start_date);
-
-         $heure_fin = $end_date->format("H\hi");;
-
-         $description = $event["description"];
-         $description = strip_tags($description, "<b><strong><i><em><u>");
-         $description = substr($description, 0, 250);
          
-         echo "
-             <div>
+         echo "<div>
 		<date>$jour_semaine <jour>$jour</jour></date>
-		<heure>$heure_debut - $heure_fin</heure>
+";
+         
+         foreach($day_events as $event) {
+             $start_date = new DateTimeImmutable($event["start_date"]);
+             $end_date = new DateTimeImmutable($event["end_date"]);
+         
+             $heure_debut = $start_date->format("H\hi");
+             $heure_fin = $end_date->format("H\hi");
+
+             $description = $event["description"];
+             $description = strip_tags($description, "<b><strong><i><em><u>");
+             $description = substr($description, 0, 250);
+         
+             echo "
+<evenement>
+  		<heure>$heure_debut - $heure_fin</heure>
 		<h1>", $event["title"], "</h1>
  ", $description, "
-	  </div>";
+</evenement>";
+         }
+         
+         echo "</div>";
      }
 ?>
 

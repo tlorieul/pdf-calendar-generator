@@ -119,6 +119,10 @@ jour {
 	color: #36478f;
 }
 
+evenement {
+	display: block;
+}
+
 heure {
 	color: #eb7748;
 	font-weight: bold;
