@@ -68,6 +68,42 @@ function group_events_per_day_per_week($events) {
     return $events_per_week;
 }
 
+
+class EventFormatter
+{
+    public function format($event) {
+        $start_time = $this->_format_time($event["start_date"]);
+        $end_time = $this->_format_time($event["end_date"]);
+        $title = $this->_format_title($event["title"]);
+        $description = $this->_format_description($event["description"]);
+        
+        $fmt = "
+        <evenement>
+  		<heure>$start_time - $end_time</heure>
+		<h1>$title</h1>
+		$description
+		</evenement>";
+        return $fmt;
+    }
+
+    protected function _format_time($time) {
+        $time = new DateTimeImmutable($time);
+        $time = $time->format("H\hi");
+        return $time;
+    }
+
+    protected function _format_title($title) {
+        return $title;
+    }
+
+    protected function _format_description($description) {
+        $description = strip_tags($description, "<b><strong><i><em><u>");
+        $description = substr($description, 0, 250);
+        return $description;
+    }
+}
+
+
 $start_date = new DateTime("2024-03-04 00:00:00");
 $end_date = clone($start_date);
 $end_date->modify("+28 day");
@@ -101,6 +137,8 @@ $events_per_week = group_events_per_day_per_week($events);
   <body>
 
 <?php
+     $event_formatter = new EventFormatter();
+        
      foreach($events_per_week as $week_events) {
          $date = new DateTime(current($week_events)[0]["start_date"]);
          $fmt = datefmt_create(
@@ -138,24 +176,8 @@ $events_per_week = group_events_per_day_per_week($events);
 		<date>$jour_semaine <jour>$jour</jour></date>
 ";
          
-         foreach($day_events as $event) {
-             $start_date = new DateTimeImmutable($event["start_date"]);
-             $end_date = new DateTimeImmutable($event["end_date"]);
-         
-             $heure_debut = $start_date->format("H\hi");
-             $heure_fin = $end_date->format("H\hi");
-
-             $description = $event["description"];
-             $description = strip_tags($description, "<b><strong><i><em><u>");
-             $description = substr($description, 0, 250);
-         
-             echo "
-<evenement>
-  		<heure>$heure_debut - $heure_fin</heure>
-		<h1>", $event["title"], "</h1>
- ", $description, "
-</evenement>";
-         }
+         foreach($day_events as $event)
+             echo $event_formatter->format($event);
          
          echo "</div>";
      }
