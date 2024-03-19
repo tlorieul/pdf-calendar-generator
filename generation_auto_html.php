@@ -97,8 +97,35 @@ class EventFormatter
     }
 
     protected function _format_description($description) {
+        // To keep a space in case of HTML tag (might introduce unwanted spaces)
+        $description = str_replace("<", " <", $description);
+
+        // Remove most HTML tags
         $description = strip_tags($description, "<b><strong><i><em><u>");
+
+        // Replace all types of spaces with a classic whitespace
+        $description = preg_replace("/\s+/u", " ", $description);
+
+        // Replace Unicode horizontal ellipsis with three separate dots
+        $description = preg_replace("/…/u", "...", $description);
+
+        // Remove horizontal lines "--------"
+        $description = preg_replace("/\s+-*\s+/u", " ", $description);
+
+        $description = trim($description);
+        
+        // Maximum number of characters
         $description = substr($description, 0, 250);
+
+        // Keep only the complete sentences
+        $res = preg_match(
+            "/(^[\s\S]+[\.\?\!])(\s([^\.\!\?]|([\.\!\?][^\s]))*)?$/u",
+            $description,
+            $matches,
+        );
+        if($res)
+            $description = $matches[1];
+        
         return $description;
     }
 }
