@@ -67,9 +67,11 @@ header {
 	text-align: right;
 }
 
-h1 {
+titre {
+	display: block;
 	margin: 0;
 	font-size: 22pt;
+	font-weight: bold;
 }
 
 div {
@@ -127,4 +129,11 @@ evenement {
 heure {
 	color: #eb7748;
 	font-weight: bold;
+}
+
+
+textarea {
+	display: block;
+    width: 85%;
+	height: 15mm;
 }

@@ -80,8 +80,8 @@ class EventFormatter
         $fmt = "
         <evenement>
   		<heure>$start_time - $end_time</heure>
-		<h1>$title</h1>
-		$description
+		<titre>$title</titre>
+		<description>$description</description>
 		</evenement>";
         return $fmt;
     }
@@ -157,7 +157,40 @@ $events_per_week = group_events_per_day_per_week($events);
 	  }
 	</style>
 	<script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js"></script>
-	<script>window.onload = function () { twemoji.parse(document.body);}</script>
+    <script>window.onload = function () { twemoji.parse(document.body);}</script>
+        
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+     
+    <script>
+     function createEditableTag(tag) {
+        function tagClicked() {
+            var divHtml = $(this).html();
+            var editableText = $("<textarea />");
+            editableText.val(divHtml);
+            $(this).replaceWith(editableText);
+            editableText.focus();
+            // setup the blur event for this new textarea
+            editableText.blur(editableTextBlurred);
+        }
+     
+     function editableTextBlurred() {
+         var html = $(this).val();
+         var viewableText = $(tag);
+         viewableText.html(html);
+         $(this).replaceWith(viewableText);
+         // setup the click event for this new div
+         viewableText.click(tagClicked);
+     }
+
+            return tagClicked
+            }
+
+     $(document).ready(function() {
+         $("titre").click(createEditableTag("<titre>"));
+         $("description").click(createEditableTag("<description>"));
+     });
+    </script>
 
   </head>
   
