@@ -26,6 +26,10 @@ Couleur fond beige : fff1e8
     margin: 0;
     box-shadow: 0;
   }
+
+  formulaire {
+	  display: none;
+  }
 }
 
 html, body, page {

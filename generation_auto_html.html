@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<meta charset="utf-8"> 
+
+	<link rel="stylesheet" href="style.css">
+	
+	<!-- Nécessaire pour wkhtmltopdf -->
+	<style>
+	  img.emoji {
+		  height: 1em;
+		  width: 1em;
+		  /* margin: 0 .05em 0 .1em; */
+		  vertical-align: -0.1em;
+	  }
+	</style>
+	<!-- 
+	<script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js"></script>
+		 <script>window.onload = function () { twemoji.parse(document.body); }</script>
+
+		 DEFER / ASYNC ???
+    -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+	<script src="strip_tags.js"></script>
+    
+    <script>
+	 const API_KEY = "AIzaSyDL4YMF0baYwuwdsZVlB-DHSEXkfIpR4hQ";
+	 const CALENDAR_ID = "1a765f00b1b3157f7f659f5d0f7343cc9b27d1ece10523108b5adf9ff5f98c82@group.calendar.google.com";
+
+	 function gapiLoaded() {
+		 gapi.load("client", {
+			 callback: initializeGapiClient,
+			 onerror: function() {
+				 // Handle loading error.
+				 console.log("gapi.client failed to load!")
+				 alert('gapi.client failed to load!');
+			 },
+			 timeout: 5000,
+			 ontimeout: function() {
+				 // Handle timeout.
+				 console.log("gapi.client could not load in a timely manner!")
+				 alert('gapi.client could not load in a timely manner!');
+			 }
+		 });
+     }
+
+	 async function initializeGapiClient() {
+		 gapi.client.setApiKey(API_KEY);
+		 await fetch("google_calendar_api_rest.json").then(function(resp) {
+			 return resp.json();
+         }).then(function(json) {
+			 calendarApiDiscovery = json;
+			 return Promise.resolve();
+         });
+		 res = gapi.client.load(calendarApiDiscovery).then(function () {
+			 console.log("okokokok");
+		 }, function () {
+			 console.log("error")
+		 });
+
+		 gapiInited = true;
+	 }
+
+	 function loadGoogleCalendar(startTime, endTime) {
+		 // TODO attendre la fin du chargement
+		 if (gapiInited) {
+			 const limit = 250;    // default value
+
+			 return gapi.client.calendar.events.list({
+				 calendarId: CALENDAR_ID,
+				 showDeleted: false,
+				 singleEvents: true,
+				 maxResults: limit,
+				 orderBy: "startTime",
+				 timeMin: startTime.toISOString(),   // TODO change to RFC3339
+				 timeMax: endTime.toISOString(),     // TODO change to RFC3339
+			 });
+		 }
+	 }
+
+	 async function loadCalendar() {
+		 // TODO récupérer la timezone du calendrier
+		 startTime = new Date($("#start_date").val());
+		 startTime.setHours(0, 0, 0, 0);
+		 
+		 endTime = new Date($("#end_date").val());
+		 endTime.setHours(23, 59, 59, 999);
+
+		 response = await loadGoogleCalendar(startTime, endTime);
+		 data = response.result.items;
+
+		 events = []
+		 for(const i of data.keys()) {
+			 events[i] = {
+				 "startDate": new Date(data[i].start.dateTime),
+				 "endDate": new Date(data[i].end.dateTime),
+				 "title": data[i].summary,
+				 "description": data[i].description,
+			 }
+		 }
+
+
+		 // TODO
+		 month = "Mars";
+		 page = $(`<page>
+	  <header>
+        <mois>${month}</mois>
+
+        <img src="imgs/internet-icon_blue.svg" style="width: 15px; height: 15px;" />
+		quartiergenereux.fr
+		<br>
+
+		<img src="imgs/facebook-icon_blue.svg" style="width: 15px; height: 15px;" />
+		<img src="imgs/instagram-icon_blue.svg" style="width: 15px; height: 15px;" />
+		QG.montpellier
+	  </header>
+
+    </page>
+		`);
+		 page.appendTo("body");
+		 page.append("<evenement></evenement>");
+
+		 for(const event of events) {
+			 options = {
+				 "weekday": "long"
+			 };
+			 dateDayOfWeek = new Intl.DateTimeFormat("fr-FR", options).format(event["startDate"]);
+			 description = strip_tags(event["description"], "<b><strong><i><em><u>");
+			 timeOptions = {
+				 "hour": "2-digit",
+				 "minute": "2-digit",
+			 };
+			 event_tag = $(`
+<div>
+<date>${dateDayOfWeek} <jour>${event["startDate"].getDate()}</jour></date>
+<evenement>
+<heure>${event["startDate"].toLocaleTimeString("fr-FR", timeOptions)}-${event["endDate"].toLocaleTimeString("fr-FR", timeOptions)}</heure>
+<titre>${event["title"]}</titre>
+<description>${description}</description>
+</evenement>
+</div>
+			 `);
+			 event_tag.appendTo(page);
+		 }
+
+		  
+         $("titre").on("click", createEditableTag("<titre>"));
+         $("description").on("click", createEditableTag("<description>"));
+	 }
+	 
+     function createEditableTag(tag) {
+         function tagClicked() {
+             var divHtml = $(this).html();
+             var editableText = $("<textarea />");
+             editableText.val(divHtml);
+             $(this).replaceWith(editableText);
+             editableText.focus();
+             // setup the blur event for this new textarea
+             editableText.blur(editableTextBlurred);
+         }
+		 
+		 function editableTextBlurred() {
+			 var html = $(this).val();
+			 var viewableText = $(tag);
+			 viewableText.html(html);
+			 $(this).replaceWith(viewableText);
+			 // setup the click event for this new div
+			 viewableText.click(tagClicked);
+		 }
+		 
+         return tagClicked;
+     }
+	 
+     $(document).ready(function() {
+		 $("#generate_calendar").on("click", loadCalendar);
+		 $("#print_button").on("click", function () { window.print(); });
+     });
+    </script>
+
+	<script src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+	
+  </head>
+  
+  <body>
+	  <formulaire>
+		  Veuillez indiquer la plage de date recherchée pour générer l'agenda :<br>
+		  
+		  Date début : <input id="start_date" type="date" /><br>
+		  Date fin : <input id="end_date" type="date" /><br>
+		  <input id="generate_calendar" type="button" value="Générer" />
+		  <input id="print_button" type="button" value="Imprimer / Sauvegarder en PDF" />
+	  </formulaire>
+  </body>
+</html>
