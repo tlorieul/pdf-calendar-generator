@@ -25,13 +25,45 @@ class EventFormatter {
 	}
 
 	static #formatTitle(title) {
+		// No specific formatting
 		return title;
 	}
 
-	// TODO complete this
+	// TODO detect when no truncation can be done
 	static #formatDescription(description) {
+		const limit = 250;
+		
+		// To keep a space in case of HTML tag (might introduce unwanted spaces)
+		description = description.replaceAll("<", " <");
+		
 		// Remove most HTML tags
-		return strip_tags(description, "<b><strong><i><em><u>");
+		description = strip_tags(description, "<b><strong><i><em><u>");
+
+		// Replace all types of spaces with a classic whitespace
+		description = description.replaceAll(/\s+/gu, " ");
+
+		// Replace three separate dots into a Unicode horizontal ellipsis
+		description = description.replaceAll(/\.\.\./gu, "…");
+
+		// Remove horizontal lines "--------"
+        description = description.replaceAll(/\s+-*\s+/gu, " ");
+		
+		description = description.trim();
+
+		// Maximum number of characters
+		description = description.substring(0, limit);
+
+		// Keep only the complete sentences
+		const eos = String.raw`\.\?!…;` // End Of Sentence characters
+		const regex = new RegExp(
+			String.raw`(^[\s\S]+[${eos}])(\s([^${eos}]|([${eos}][^\s]))*)?$`,
+			"u",
+		);
+		const matches = description.match(regex);
+        if(matches)
+            description = matches[1];
+		
+		return description;
 	}
 }
 
