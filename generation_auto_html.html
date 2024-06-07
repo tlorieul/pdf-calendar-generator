@@ -52,11 +52,10 @@
 		`);
 		 page.appendTo("body");
 
-		 for(const event of events) {
-			 event_tag = event_formatter(event);
-			 event_tag.appendTo(page);
-		 }
-		  
+		 events_html = events_by_date_formatter(events);
+		 //events_html = event_formatter(events);
+		 page.append(events_html.join(""));
+
          $("name").on("click", createEditableTag("<name>"));
          $("description").on("click", createEditableTag("<description>"));
 	 }
