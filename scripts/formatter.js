@@ -6,11 +6,11 @@ class EventFormatter {
 		const description = this.#formatDescription(event["description"]);
 
 		const event_tag = `
-<evenement>
-<heure>${startTime}-${endTime}</heure>
-<titre>${title}</titre>
+<event>
+<hour>${startTime}-${endTime}</hour>
+<name>${title}</name>
 <description>${description}</description>
-</evenement>
+</event>
 		`;
 		return event_tag;
 	}
@@ -44,10 +44,10 @@ function event_formatter(event) {
 
 	event_fmt = EventFormatter.format(event);
 	event_tag = $(`
-<div>
-<date>${dateDayOfWeek} <jour>${date}</jour></date>
+<day-events-block>
+<date-block>${dateDayOfWeek} <date>${date}</date></date-block>
 ${event_fmt}
-</div>
+</day-events-block>
 			 `);
 
 	return event_tag;

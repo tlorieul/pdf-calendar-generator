@@ -71,14 +71,18 @@ header {
 	text-align: right;
 }
 
-titre {
+month {
 	display: block;
-	margin: 0;
-	font-size: 22pt;
-	font-weight: bold;
+	margin-bottom: -2.5mm;
+
+	font-family: Lilita One;	
+	font-size: 65pt;
+	text-transform: capitalize;
 }
 
-div {
+day-events-block {
+	display: block;
+	
 	margin: 0mm 0mm 3mm 22mm;
 	padding: 1mm 3mm 2mm;
 
@@ -90,16 +94,7 @@ div {
 	background-color: #fff1e8;
 }
 
-mois {
-	display: block;
-	margin-bottom: -2.5mm;
-
-	font-family: Lilita One;	
-	font-size: 65pt;
-	text-transform: capitalize;
-}
-
-date {
+date-block {
 	margin: 0mm 2mm 3mm -20mm;
 	/* margin: 2mm 2mm 3mm -20mm; */
 	padding: 2mm 1mm 2mm;
@@ -117,7 +112,7 @@ date {
 	float: left;
 }
 
-jour {
+date {
 	margin: -1mm -1mm -2mm;
 	display: block;
 	
@@ -126,15 +121,24 @@ jour {
 	color: #36478f;
 }
 
-evenement {
+event {
 	display: block;
 }
 
-heure {
+hour {
 	color: #eb7748;
 	font-weight: bold;
 }
 
+name {
+	display: block;
+	margin: 0;
+	font-size: 22pt;
+	font-weight: bold;
+}
+
+description {
+}
 
 textarea {
 	display: block;

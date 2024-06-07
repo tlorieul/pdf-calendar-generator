@@ -78,11 +78,11 @@ class EventFormatter
         $description = $this->_format_description($event["description"]);
         
         $fmt = "
-        <evenement>
-  		<heure>$start_time - $end_time</heure>
-		<titre>$title</titre>
+        <event>
+  		<hour>$start_time - $end_time</hour>
+		<name>$title</name>
 		<description>$description</description>
-		</evenement>";
+		</event>";
         return $fmt;
     }
 
@@ -187,7 +187,7 @@ $events_per_week = group_events_per_day_per_week($events);
             }
 
      $(document).ready(function() {
-         $("titre").click(createEditableTag("<titre>"));
+         $("name").click(createEditableTag("<name>"));
          $("description").click(createEditableTag("<description>"));
      });
     </script>
@@ -212,7 +212,7 @@ $events_per_week = group_events_per_day_per_week($events);
      <page>
 
 	  <header>
-        <mois><?php echo $mois; ?></mois>
+        <month><?php echo $mois; ?></month>
 
         <img src="imgs/internet-icon_blue.svg" style="width: 15px; height: 15px;" />
 		quartiergenereux.fr
@@ -232,14 +232,14 @@ $events_per_week = group_events_per_day_per_week($events);
          );
          $jour_semaine = datefmt_format($fmt, $start_date);
          
-         echo "<div>
-		<date>$jour_semaine <jour>$jour</jour></date>
+         echo "<day-events-block>
+		<date-block>$jour_semaine <date>$jour</date></date-block>
 ";
          
          foreach($day_events as $event)
              echo $event_formatter->format($event);
          
-         echo "</div>";
+         echo "</day-events-block>";
      }
 ?>
 
