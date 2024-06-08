@@ -52,6 +52,9 @@
 		 paginizer.clean();
 		 paginizer.paginize(eventsHTML);
 
+		 // FIXME avoid recreating completely the pages, cleaner and doesn't require to rebind events on month
+		 $("month").on("click", createEditableTag("<month>"));
+
 		 $("html").scrollTop(position);
 	 }
 	 
