@@ -1,9 +1,9 @@
 class EventFormatter {
 	static format(event) {
-		const startTime = this.#formatTime(event["startDate"]);
-		const endTime = this.#formatTime(event["endDate"]);
-		const title = this.#formatTitle(event["title"]);
-		const description = this.#formatDescription(event["description"]);
+		const startTime = this.formatTime(event["startDate"]);
+		const endTime = this.formatTime(event["endDate"]);
+		const title = this.formatTitle(event["title"]);
+		const description = this.formatDescription(event["description"]);
 
 		const event_tag = `
 <event>
@@ -15,7 +15,7 @@ class EventFormatter {
 		return event_tag;
 	}
 
-	static #formatTime(time) {
+	static formatTime(time) {
 		// Formats to HH:MM (09:30, 23:59, etc.)
 		const timeOptions = {
 			"hour": "2-digit",
@@ -24,13 +24,13 @@ class EventFormatter {
 		return time.toLocaleTimeString("fr-FR", timeOptions);
 	}
 
-	static #formatTitle(title) {
+	static formatTitle(title) {
 		// No specific formatting
 		return title;
 	}
 
 	// TODO detect when no truncation can be done
-	static #formatDescription(description) {
+	static formatDescription(description) {
 		const limit = 250;
 		
 		// To keep a space in case of HTML tag (might introduce unwanted spaces)
@@ -72,26 +72,36 @@ class EventsListFormatterAbstract {
 	format(events) {
 		throw Error("not implemented");
 	}
+
+	formatDay(date) {
+		return date.getDate();
+	}
+
+	formatDayOfWeek(date) {
+		let options = {
+			"weekday": "long",
+		};
+		return new Intl.DateTimeFormat("fr-FR", options).format(date);
+
+	}
 }
 
-class EventsListFormatter {
+class EventsListFormatter extends EventsListFormatterAbstract {
 	format(events) {
 		let result = []
 		for(const event of events) {
-			let options = {
-				"weekday": "long",
-			};
-			let dateDayOfWeek = new Intl.DateTimeFormat("fr-FR", options).format(event["startDate"]);
-			let date = event["startDate"].getDate();
+			let date = event["startDate"];
+			let day = this.formatDay(date);
+			let dateDayOfWeek = this.formatDayOfWeek(date);
 
 			let eventFmt = EventFormatter.format(event);
 			let dayBlockTag = $(`
 <day-events-block>
-<date-block>${dateDayOfWeek} <date>${date}</date></date-block>
+<date-block>${dateDayOfWeek} <date>${day}</date></date-block>
 ${eventFmt}
 </day-events-block>
 			`);
-			dayBlockTag.data("date", event["startDate"]);
+			dayBlockTag.data("date", date);
 
 			result.push(dayBlockTag);
 		}
@@ -103,26 +113,25 @@ ${eventFmt}
 class EventsGroupedByDateListFormatter extends EventsListFormatterAbstract {
 	format(events) {
 		// Group events by date
-		let events_by_date = new Map();
+		let eventsByDate = new Map();
 		for(const event of events) {
-			let date = event["startDate"].getDate();
+			let date = event["startDate"].toDateString();
 			
-			if(events_by_date.get(date) === undefined)
-				events_by_date.set(date, []);
+			if(eventsByDate.get(date) === undefined) {
+				console.log(date);
+				eventsByDate.set(date, []);
+			}
 			
-			events_by_date.get(date).push(event);
+			eventsByDate.get(date).push(event);
 		}
 
 		
 		let events_html = []
-		for(const events of events_by_date.values()) {
+		for(const events of eventsByDate.values()) {
 			// Get date of the current group
-			let event = events[0];
-			let options = {
-				"weekday": "long",
-			};
-			let dateDayOfWeek = new Intl.DateTimeFormat("fr-FR", options).format(event["startDate"]);
-			let date = event["startDate"].getDate();
+			let date = events[0]["startDate"];
+			let day = this.formatDay(date);
+			let dateDayOfWeek = this.formatDayOfWeek(date);
 
 			let events_fmt = [];
 			for(const event of events) {
@@ -133,11 +142,11 @@ class EventsGroupedByDateListFormatter extends EventsListFormatterAbstract {
 
 			let dayEventsTag = $(`
 <day-events-block>
-<date-block>${dateDayOfWeek} <date>${date}</date></date-block>
+<date-block>${dateDayOfWeek} <date>${day}</date></date-block>
 ${events_str}
 </day-events-block>
 			`);
-			dayEventsTag.data("date", event["startDate"]);
+			dayEventsTag.data("date", date);
 			events_html.push(dayEventsTag);
 		}
 

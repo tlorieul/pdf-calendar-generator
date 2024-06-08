@@ -39,8 +39,8 @@
 		 //eventsListFormatter = new EventsListFormatter();
 		 eventsHTML = eventsListFormatter.format(events);
 
-		 //paginizer = new LinearPaginizer();
-		 paginizer = new SinglePagePaginizer();
+		 paginizer = new LinearPaginizer();
+		 //paginizer = new SinglePagePaginizer();
 		 paginizer.paginize(eventsHTML);
 
          $("month").on("click", createEditableTag("<month>"));
