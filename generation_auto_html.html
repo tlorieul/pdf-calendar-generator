@@ -33,11 +33,14 @@
 		 endDate = $("#end_date").val();
 		 events = await loadCalendarsEvents(startDate, endDate);
 
+		 console.log(events);
+
 		 eventsListFormatter = new EventsGroupedByDateListFormatter();
 		 //eventsListFormatter = new EventsListFormatter();
 		 eventsHTML = eventsListFormatter.format(events);
 
-		 paginizer = new LinearPaginizer();
+		 //paginizer = new LinearPaginizer();
+		 paginizer = new SinglePagePaginizer();
 		 paginizer.paginize(eventsHTML);
 
          $("month").on("click", createEditableTag("<month>"));

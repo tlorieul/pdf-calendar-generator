@@ -79,20 +79,21 @@ class EventsListFormatter {
 		let result = []
 		for(const event of events) {
 			let options = {
-				"weekday": "long"
+				"weekday": "long",
 			};
 			let dateDayOfWeek = new Intl.DateTimeFormat("fr-FR", options).format(event["startDate"]);
 			let date = event["startDate"].getDate();
 
 			let eventFmt = EventFormatter.format(event);
-			let eventStr = `
+			let dayBlockTag = $(`
 <day-events-block>
 <date-block>${dateDayOfWeek} <date>${date}</date></date-block>
 ${eventFmt}
 </day-events-block>
-			 `;
+			`);
+			dayBlockTag.data("date", event["startDate"]);
 
-			result.push(eventStr);
+			result.push(dayBlockTag);
 		}
 
 		return result;
@@ -118,7 +119,7 @@ class EventsGroupedByDateListFormatter extends EventsListFormatterAbstract {
 			// Get date of the current group
 			let event = events[0];
 			let options = {
-				"weekday": "long"
+				"weekday": "long",
 			};
 			let dateDayOfWeek = new Intl.DateTimeFormat("fr-FR", options).format(event["startDate"]);
 			let date = event["startDate"].getDate();
@@ -130,13 +131,14 @@ class EventsGroupedByDateListFormatter extends EventsListFormatterAbstract {
 			}
 			let events_str = events_fmt.join("");
 
-			let day_events_html = `
+			let dayEventsTag = $(`
 <day-events-block>
 <date-block>${dateDayOfWeek} <date>${date}</date></date-block>
 ${events_str}
 </day-events-block>
-			 `;
-			events_html.push(day_events_html);
+			`);
+			dayEventsTag.data("date", event["startDate"]);
+			events_html.push(dayEventsTag);
 		}
 
 		return events_html;
@@ -149,7 +151,7 @@ class PaginizerAbstract {
 		throw Error("not implemented");
 	}
 
-	createPage(month) {
+	createPage(month = "") {
 		let page = $(`<page>
 	  <header>
         <month>${month}</month>
@@ -169,28 +171,57 @@ class PaginizerAbstract {
 
 		return page;
 	}
+
+	updateMonthText() {
+		let pages = $("page");
+
+		for(let page of pages) {
+			page = $(page);
+			let dayBlocks = page.find("day-events-block");
+			// FIXME always determines the month name based on first date of the page
+			let date = $(dayBlocks[0]).data("date");
+
+			let options = {
+				"month": "long",
+			};
+			let month = new Intl.DateTimeFormat("fr-FR", options).format(date);
+
+			page.find("month").html(month);
+		}
+	}
+}
+
+// Mainly for debugging purposes
+class SinglePagePaginizer extends PaginizerAbstract {
+	paginize(eventsTags) {
+		let page = this.createPage();
+		page.append(eventsTags);
+
+		for(const eventTag of eventsTags) {
+			page.append(eventTag);
+		}
+	}
 }
 
 class LinearPaginizer extends PaginizerAbstract {
 	paginize(eventsHTML) {
-		// TODO
-		let month = "Mars";
-		let page = this.createPage(month);
+		let page = this.createPage();
 
 		for(const eventHTML of eventsHTML) {
-			let eventTag = $(eventHTML);
+			let eventTag = eventHTML;
 			page.append(eventTag);
 
 			let pageBottomPosition = page.position().top + page.height();
 			let eventBlockBottomPosition = eventTag.position().top + eventTag.outerHeight();
 			if(pageBottomPosition < eventBlockBottomPosition) {
-				page.remove(eventTag);
+				eventTag.detach();
 
-				// month = ...
-				page = this.createPage(month);
+				page = this.createPage();
 				page.append(eventTag);
 			}
 		}
+
+		this.updateMonthText();
 	}
 }
 
