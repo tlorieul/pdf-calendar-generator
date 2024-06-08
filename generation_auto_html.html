@@ -33,29 +33,12 @@
 		 endDate = $("#end_date").val();
 		 events = await loadCalendarsEvents(startDate, endDate);
 
-		 // TODO
-		 month = "Mars";
-		 page = $(`<page>
-	  <header>
-        <month>${month}</month>
-
-        <img src="imgs/internet-icon_blue.svg" style="width: 15px; height: 15px;" />
-		quartiergenereux.fr
-		<br>
-
-		<img src="imgs/facebook-icon_blue.svg" style="width: 15px; height: 15px;" />
-		<img src="imgs/instagram-icon_blue.svg" style="width: 15px; height: 15px;" />
-		QG.montpellier
-	  </header>
-
-    </page>
-		`);
-		 page.appendTo("body");
-
 		 eventsListFormatter = new EventsGroupedByDateListFormatter();
 		 //eventsListFormatter = new EventsListFormatter();
 		 eventsHTML = eventsListFormatter.format(events);
-		 page.append(eventsHTML.join(""));
+
+		 paginizer = new LinearPaginizer();
+		 paginizer.paginize(eventsHTML);
 
          $("month").on("click", createEditableTag("<month>"));
          $("name").on("click", createEditableTag("<name>"));

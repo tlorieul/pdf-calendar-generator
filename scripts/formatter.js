@@ -143,3 +143,59 @@ ${events_str}
 	}
 }
 
+
+class PaginizerAbstract {
+	paginize(eventsHTML) {
+		throw Error("not implemented");
+	}
+
+	createPage(month) {
+		let page = $(`<page>
+	  <header>
+        <month>${month}</month>
+
+        <img src="imgs/internet-icon_blue.svg" style="width: 15px; height: 15px;" />
+		quartiergenereux.fr
+		<br>
+
+		<img src="imgs/facebook-icon_blue.svg" style="width: 15px; height: 15px;" />
+		<img src="imgs/instagram-icon_blue.svg" style="width: 15px; height: 15px;" />
+		QG.montpellier
+	  </header>
+
+    </page>
+		`);
+		page.appendTo("body");
+
+		return page;
+	}
+}
+
+class LinearPaginizer extends PaginizerAbstract {
+	paginize(eventsHTML) {
+		// TODO
+		let month = "Mars";
+		let page = this.createPage(month);
+
+		for(const eventHTML of eventsHTML) {
+			let eventTag = $(eventHTML);
+			page.append(eventTag);
+
+			let pageBottomPosition = page.position().top + page.height();
+			let eventBlockBottomPosition = eventTag.position().top + eventTag.outerHeight();
+			if(pageBottomPosition < eventBlockBottomPosition) {
+				page.remove(eventTag);
+
+				// month = ...
+				page = this.createPage(month);
+				page.append(eventTag);
+			}
+		}
+	}
+}
+
+class PerWeekPaginizer extends PaginizerAbstract {
+	paginize(eventsHTML) {
+		throw Error("not implemented");
+	}
+}
