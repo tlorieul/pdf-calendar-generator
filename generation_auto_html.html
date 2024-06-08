@@ -33,8 +33,6 @@
 		 endDate = $("#end_date").val();
 		 events = await loadCalendarsEvents(startDate, endDate);
 
-		 console.log(events);
-
 		 eventsListFormatter = new EventsGroupedByDateListFormatter();
 		 //eventsListFormatter = new EventsListFormatter();
 		 eventsHTML = eventsListFormatter.format(events);
@@ -46,6 +44,15 @@
          $("month").on("click", createEditableTag("<month>"));
          $("name").on("click", createEditableTag("<name>"));
          $("description").on("click", createEditableTag("<description>"));
+	 }
+
+	 function updatePagination() {
+		 let position = $("html").scrollTop();
+		 
+		 paginizer.clean();
+		 paginizer.paginize(eventsHTML);
+
+		 $("html").scrollTop(position);
 	 }
 	 
      function createEditableTag(tag) {
@@ -66,6 +73,8 @@
 			 $(this).replaceWith(viewableText);
 			 // setup the click event for this new div
 			 viewableText.click(tagClicked);
+
+			 updatePagination();
 		 }
 		 
          return tagClicked;

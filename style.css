@@ -5,8 +5,8 @@ Couleur fond beige : fff1e8
 */
 
 @font-face {
-  font-family: Lilita One;
-  src: url(fonts/LilitaOne-Regular.ttf);
+	font-family: Lilita One;
+	src: url(fonts/LilitaOne-Regular.ttf);
 }
 
 * {
@@ -15,21 +15,20 @@ Couleur fond beige : fff1e8
     print-color-adjust: exact !important;           /* Firefox 97+, Safari 15.4+ */
 }
 
-/* weasyprint */
 @page {
-	size: A4;
-	margin: 0;
+    size: A4;
+    margin: 0;
 }
 
 @media print {
-  body, page[size="A4"] {
-    margin: 0;
-    box-shadow: 0;
-  }
+	body, page[size="A4"] {
+		margin: 0;
+		box-shadow: 0;
+	}
 
-  formulaire {
-	  display: none;
-  }
+	formulaire {
+		display: none;
+	}
 }
 
 html, body, page {
@@ -55,6 +54,9 @@ page {
 	background-repeat: no-repeat;
 
 	page-break-after: always;
+
+	padding-bottom: 10mm;
+	box-sizing: border-box;
 }
 
 

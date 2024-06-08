@@ -117,10 +117,8 @@ class EventsGroupedByDateListFormatter extends EventsListFormatterAbstract {
 		for(const event of events) {
 			let date = event["startDate"].toDateString();
 			
-			if(eventsByDate.get(date) === undefined) {
-				console.log(date);
+			if(eventsByDate.get(date) === undefined)
 				eventsByDate.set(date, []);
-			}
 			
 			eventsByDate.get(date).push(event);
 		}
@@ -158,6 +156,10 @@ ${events_str}
 class PaginizerAbstract {
 	paginize(eventsHTML) {
 		throw Error("not implemented");
+	}
+
+	clean() {
+		$("page").detach();
 	}
 
 	createPage(month = "") {

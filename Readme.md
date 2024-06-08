@@ -3,7 +3,7 @@
 [X] Tronquer la longueur du message
 [X] Pagination selon la place disponible sur la page
 [X] Récupérer le mois automatiquement
-[ ] Rafraichir la pagination en cas de modifications ?
+[X] Rafraichir la pagination en cas de modifications ?
 [ ] Pagination par semaine
 [ ] Afficher le descriptif complet si on veut modifier le résumé
 [ ] Vérifier la validité des dates du formulaire
