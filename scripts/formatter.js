@@ -67,69 +67,79 @@ class EventFormatter {
 	}
 }
 
-function events_by_date_formatter(events) {
-	events_by_date = new Map();
-	for(const event of events) {
-		date = event["startDate"].getDate();
-		
-		if(events_by_date.get(date) === undefined)
-			events_by_date.set(date, []);
-		
-		events_by_date.get(date).push(event);
+
+class EventsListFormatterAbstract {
+	format(events) {
+		throw Error("not implemented");
 	}
+}
 
-	
-	events_html = []
-	
-	for(const events of events_by_date.values()) {
-		event = events[0];
-		options = {
-			"weekday": "long"
-		};
-		dateDayOfWeek = new Intl.DateTimeFormat("fr-FR", options).format(event["startDate"]);
-		date = event["startDate"].getDate();
-
-		events_fmt = [];
-		
+class EventsListFormatter {
+	format(events) {
+		let result = []
 		for(const event of events) {
-			event_fmt = EventFormatter.format(event);
-			events_fmt.push(event_fmt);
-		}
-		events_str = events_fmt.join("");
+			let options = {
+				"weekday": "long"
+			};
+			let dateDayOfWeek = new Intl.DateTimeFormat("fr-FR", options).format(event["startDate"]);
+			let date = event["startDate"].getDate();
 
-		day_events_html = `
+			let eventFmt = EventFormatter.format(event);
+			let eventStr = `
+<day-events-block>
+<date-block>${dateDayOfWeek} <date>${date}</date></date-block>
+${eventFmt}
+</day-events-block>
+			 `;
+
+			result.push(eventStr);
+		}
+
+		return result;
+	}
+}
+
+class EventsGroupedByDateListFormatter extends EventsListFormatterAbstract {
+	format(events) {
+		// Group events by date
+		let events_by_date = new Map();
+		for(const event of events) {
+			let date = event["startDate"].getDate();
+			
+			if(events_by_date.get(date) === undefined)
+				events_by_date.set(date, []);
+			
+			events_by_date.get(date).push(event);
+		}
+
+		
+		let events_html = []
+		for(const events of events_by_date.values()) {
+			// Get date of the current group
+			let event = events[0];
+			let options = {
+				"weekday": "long"
+			};
+			let dateDayOfWeek = new Intl.DateTimeFormat("fr-FR", options).format(event["startDate"]);
+			let date = event["startDate"].getDate();
+
+			let events_fmt = [];
+			for(const event of events) {
+				let event_fmt = EventFormatter.format(event);
+				events_fmt.push(event_fmt);
+			}
+			let events_str = events_fmt.join("");
+
+			let day_events_html = `
 <day-events-block>
 <date-block>${dateDayOfWeek} <date>${date}</date></date-block>
 ${events_str}
 </day-events-block>
 			 `;
-		events_html.push(day_events_html);
-	}
+			events_html.push(day_events_html);
+		}
 
-	return events_html;
+		return events_html;
+	}
 }
 
-
-function event_formatter(event) {
-	result = []
-	
-	for(const event of events) {
-		options = {
-			"weekday": "long"
-		};
-		dateDayOfWeek = new Intl.DateTimeFormat("fr-FR", options).format(event["startDate"]);
-		date = event["startDate"].getDate();
-
-		event_fmt = EventFormatter.format(event);
-		event_str = `
-<day-events-block>
-<date-block>${dateDayOfWeek} <date>${date}</date></date-block>
-${event_fmt}
-</day-events-block>
-			 `;
-
-		result.push(event_str);
-	}
-
-	return result;
-}

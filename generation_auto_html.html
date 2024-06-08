@@ -52,18 +52,20 @@
 		`);
 		 page.appendTo("body");
 
-		 events_html = events_by_date_formatter(events);
-		 //events_html = event_formatter(events);
-		 page.append(events_html.join(""));
+		 eventsListFormatter = new EventsGroupedByDateListFormatter();
+		 //eventsListFormatter = new EventsListFormatter();
+		 eventsHTML = eventsListFormatter.format(events);
+		 page.append(eventsHTML.join(""));
 
+         $("month").on("click", createEditableTag("<month>"));
          $("name").on("click", createEditableTag("<name>"));
          $("description").on("click", createEditableTag("<description>"));
 	 }
 	 
      function createEditableTag(tag) {
          function tagClicked() {
-             var divHtml = $(this).html();
-             var editableText = $("<textarea />");
+             let divHtml = $(this).html();
+             let editableText = $("<textarea />");
              editableText.val(divHtml);
              $(this).replaceWith(editableText);
              editableText.focus();
@@ -72,8 +74,8 @@
          }
 		 
 		 function editableTextBlurred() {
-			 var html = $(this).val();
-			 var viewableText = $(tag);
+			 let html = $(this).val();
+			 let viewableText = $(tag);
 			 viewableText.html(html);
 			 $(this).replaceWith(viewableText);
 			 // setup the click event for this new div
@@ -97,8 +99,8 @@
 	  <formulaire>
 		  Veuillez indiquer la plage de date recherchée pour générer l'agenda :<br>
 		  
-		  Date début : <input id="start_date" type="date" /><br>
-		  Date fin : <input id="end_date" type="date" /><br>
+		  Date de début : <input id="start_date" type="date" /><br>
+		  Date de fin : <input id="end_date" type="date" /><br>
 		  <input id="generate_calendar" type="button" value="Générer" />
 		  <input id="print_button" type="button" value="Imprimer / Sauvegarder en PDF" />
 	  </formulaire>
