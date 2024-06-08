@@ -42,7 +42,7 @@
 		  //paginizer = new SinglePagePaginizer();
 		  paginizer.paginize(eventsHTML);
 
-		  $("month").on("click", createEditableTag("<month>"));
+		  //$("month").on("click", createEditableTag("<month>"));
 		  $("name").on("click", createEditableTag("<name>"));
 		  $("description").on("click", createEditableTag("<description>"));
 	  }
@@ -54,7 +54,7 @@
 		  paginizer.paginize(eventsHTML);
 
 		  // FIXME avoid recreating completely the pages, cleaner and doesn't require to rebind events on month
-		  $("month").on("click", createEditableTag("<month>"));
+		  //$("month").on("click", createEditableTag("<month>"));
 
 		  $("html").scrollTop(position);
 	  }
