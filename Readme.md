@@ -4,6 +4,8 @@
 - [X] Pagination selon la place disponible sur la page
 - [X] Récupérer le mois automatiquement
 - [X] Rafraichir la pagination en cas de modifications ?
+- [ ] Modification du mois manuellement
+- [ ] Mettre à jour proprement la pagination lors d'une modification
 - [ ] Pagination par semaine
 - [ ] Afficher le descriptif complet si on veut modifier le résumé
 - [ ] Vérifier la validité des dates du formulaire
