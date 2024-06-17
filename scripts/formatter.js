@@ -31,6 +31,10 @@ class EventFormatter {
 
 	// TODO detect when no truncation can be done
 	static formatDescription(description) {
+		// FIXME better fix
+		if(typeof description == "undefined")
+			return "<b style='color:red;'>PAS DE TEXTE !!!!</b>";
+		
 		const limit = 250;
 		
 		// To keep a space in case of HTML tag (might introduce unwanted spaces)
